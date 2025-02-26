@@ -57,6 +57,7 @@ def create_article(title, category, date, content, excerpt):
 
     # 創建文章 HTML 文件
     with open(article_filename, 'w', encoding='utf-8') as f:
+        # 使用 HTML 格式的內容
         article_content = article_template.format(title=title, category=CATEGORY_NAMES[category], date=date, content=content)
         f.write(article_content)
 
@@ -82,6 +83,9 @@ def create_article(title, category, date, content, excerpt):
     # 隨機插入到 blogpage.html
     insert_randomly_into_blogpage(thumbnail_html)
 
+    # 隨機插入到 index.html
+    insert_randomly_into_index(thumbnail_html)
+
 def insert_randomly_into_blogpage(thumbnail_html):
     blogpage_file = "blogpage.html"
     with open(blogpage_file, 'r+', encoding='utf-8') as f:
@@ -92,6 +96,26 @@ def insert_randomly_into_blogpage(thumbnail_html):
             # 隨機選擇插入位置
             random_position = random.randint(0, insert_position)
             new_content = page_content[:random_position] + thumbnail_html + page_content[random_position:]
+            f.seek(0)
+            f.write(new_content)
+            f.truncate()
+
+def insert_randomly_into_index(thumbnail_html):
+    index_file = "index.html"
+    with open(index_file, 'r+', encoding='utf-8') as f:
+        page_content = f.read()
+        # 找到第一個插入位置
+        first_insert_position = page_content.find('<p class="text-gray-400 mt-2">探討總體經濟理論重要概念與應用解析。</p>')
+        # 找到第二個插入位置
+        second_insert_position = page_content.find('<article class="hover:bg-gray-700/50 p-4 rounded-lg transition-colors duration-300">\n                                <h3 class="text-lg font-semibold text-white">簡單六爻卜卦</h3>\n                                <p class="text-gray-400 mt-2">易經六爻卜卦的基礎入門與實踐應用。</p>\n                            </article>')
+        
+        if first_insert_position != -1:
+            # 隨機選擇一個位置插入
+            if random.choice([True, False]):
+                new_content = page_content[:first_insert_position] + thumbnail_html + page_content[first_insert_position:]
+            else:
+                new_content = page_content[:second_insert_position] + thumbnail_html + page_content[second_insert_position:]
+            
             f.seek(0)
             f.write(new_content)
             f.truncate()
